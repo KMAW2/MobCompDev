@@ -1,0 +1,3 @@
+При добавлении нового модуля для Empty Activity нужен котлин -> Создадим Empty Views Activity
+
+При добавлении горизонтальной разметки создаём не Layout resourse, а нажимаем в Design "Create Landscape Qualifier".

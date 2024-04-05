@@ -51,7 +51,7 @@ public class WebViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_web_view, container, false);
         WebView webView = view.findViewById(R.id.web_view);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://mirea.ru/");
+        webView.loadUrl("https://2ch.hk/");
         return view;
     }
 }

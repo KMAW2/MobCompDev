@@ -23,24 +23,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickPlay(View v) {
-        binding.play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(MainActivity.class.getSimpleName(), "play");
-                mediaPlayer.start();
-            }
-        });
+        Log.d(MainActivity.class.getSimpleName(), "play");
+        mediaPlayer.start();
     }
 
     public void onClickPause(View v) {
-        binding.stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(MainActivity.class.getSimpleName(), "pause");
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                }
-            }
-        });
+        Log.d(MainActivity.class.getSimpleName(), "pause");
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
     }
+
 }

@@ -35,8 +35,8 @@ public class PlayerService extends Service {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Franco Corelli"))
-                .setContentTitle("Music Player");
+                        .bigText("E lucevan le stelle"))
+                .setContentTitle("Franco Corelli");
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Иванов Е. А. Notification", importance);

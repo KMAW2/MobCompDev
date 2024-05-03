@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,13 +68,13 @@ public class Audio extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (mStartRecording) {
-                    recordButton.setText("Stop recording");
+                    recordButton.setText("Остановить запись");
                     playButton.setEnabled(false);
                     sendButton.setEnabled(false);
                     startRecording();
                     mStartRecording = !mStartRecording;
                 } else {
-                    recordButton.setText("Start recording");
+                    recordButton.setText("Начать запись");
                     playButton.setEnabled(true);
                     stopRecording();
                     mStartRecording = !mStartRecording;
@@ -83,13 +86,13 @@ public class Audio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mStartPlaying) {
-                    playButton.setText("Stop playing");
+                    playButton.setText("Остановить");
                     recordButton.setEnabled(false);
                     sendButton.setEnabled(false);
                     startPlaying();
                     mStartPlaying = !mStartPlaying;
                 } else {
-                    playButton.setText("Start playing");
+                    playButton.setText("Воспроизвести");
                     recordButton.setEnabled(true);
                     sendButton.setEnabled(true);
                     stopPlaying();
@@ -97,11 +100,15 @@ public class Audio extends AppCompatActivity {
                 }
             }
         });
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //всплывает "отправлено"
-            }
+        sendButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Отправка...", Toast.LENGTH_SHORT).show();
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, binding.editTextText2.getText().toString());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(recordFilePath));
+            shareIntent.setType("audio/3gpp");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "send"));
         });
     }
 

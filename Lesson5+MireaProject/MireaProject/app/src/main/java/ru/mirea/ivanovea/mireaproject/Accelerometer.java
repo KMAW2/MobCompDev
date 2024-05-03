@@ -53,7 +53,7 @@ public class Accelerometer extends AppCompatActivity implements SensorEventListe
         double totalAcceleration = Math.sqrt(x * x + y * y + z * z);
 
 
-        if (totalAcceleration > 1.0) {
+        if (totalAcceleration > 10) {
 
             statusTextView.setText("User motion status: Moving");
         } else {

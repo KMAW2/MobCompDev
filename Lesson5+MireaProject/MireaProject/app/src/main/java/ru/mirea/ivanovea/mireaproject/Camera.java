@@ -4,12 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -22,7 +25,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -43,7 +48,6 @@ public class Camera extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         binding = CameraBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -65,7 +69,15 @@ public class Camera extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    binding.imageView.setImageURI(imageUri);
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(imageUri);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    binding.imageView.setImageBitmap(bitmap);
+                    binding.button4.setEnabled(true);
                 }
             }
         };
@@ -87,14 +99,19 @@ public class Camera extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                saveButton.setEnabled(false);
+                saveButton.setEnabled(true);
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //всплывает "сохранено"
-            }
+        saveButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Отправка...", Toast.LENGTH_SHORT).show();
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, binding.editTextText.getText().toString());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            shareIntent.setType("image/jpeg");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "send"));
         });
     }
         @Override

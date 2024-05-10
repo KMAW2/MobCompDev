@@ -5,6 +5,15 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="employeedb">
+        <State />
+      </entry>
+      <entry key="internalfilestorage">
+        <State />
+      </entry>
+      <entry key="notebook">
+        <State />
+      </entry>
       <entry key="securesharedpreferences">
         <State />
       </entry>

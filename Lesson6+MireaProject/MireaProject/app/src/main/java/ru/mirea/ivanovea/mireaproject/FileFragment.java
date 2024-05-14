@@ -2,6 +2,8 @@ package ru.mirea.ivanovea.mireaproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -61,6 +63,7 @@ public class FileFragment extends Fragment {
         binding.countButton.setOnClickListener(v -> {
             if (isFileSaved || isFileLoaded) {
                 onCountButtonClick();
+                binding.counttextView2.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(requireContext(), "Сначала сохраните или загрузите файл", Toast.LENGTH_SHORT).show();
             }
@@ -68,6 +71,40 @@ public class FileFragment extends Fragment {
     }
 
     private void onCountButtonClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Посчитать слова в тексте?");
+        builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String text = binding.textEditText.getText().toString();
+                String fileName = binding.fileNameEditText.getText().toString();
+
+                if (!text.isEmpty() && !fileName.isEmpty()) {
+                    String fileText = loadFromFile(fileName);
+                    if (fileText != null) {
+                        if (text.equals(fileText)) {
+                            countWords();
+                        } else {
+                            Toast.makeText(requireContext(), "Сохраните измененный текст в файл", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Файл не найден", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Введите текст", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
+
+
+    private void countWords() {
         String text = binding.textEditText.getText().toString();
 
         if (!text.isEmpty()) {
@@ -77,6 +114,7 @@ public class FileFragment extends Fragment {
         }
     }
 
+
     public void onSaveButtonClick() {
         String fileName = binding.fileNameEditText.getText().toString();
         String text = binding.textEditText.getText().toString();
@@ -84,10 +122,17 @@ public class FileFragment extends Fragment {
         if (!fileName.isEmpty() && !text.isEmpty()) {
             saveToFile(fileName, text);
         } else {
-            Toast.makeText(requireContext(), "Введите название файла и текст", Toast.LENGTH_SHORT).show();
-        }
+            if (fileName.isEmpty()){
+                Toast.makeText(requireContext(), "Введите название файла", Toast.LENGTH_SHORT).show();
+            } else {
+                if (text.isEmpty()) {
+                    Toast.makeText(requireContext(), "Введите текст", Toast.LENGTH_SHORT).show();
+                }
+                }
+            }
         isFileSaved = true;
     }
+
 
     public void onLoadButtonClick() {
         String fileName = binding.fileNameEditText.getText().toString();

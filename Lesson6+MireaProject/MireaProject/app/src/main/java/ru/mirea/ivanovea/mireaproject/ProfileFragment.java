@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import ru.mirea.ivanovea.mireaproject.databinding.FragmentProfileBinding;
 
@@ -58,10 +59,14 @@ public class ProfileFragment extends Fragment {
         String surname = binding.editTextText2.getText().toString();
         String age = binding.editTextText3.getText().toString();
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("name", name);
-        editor.putString("surname", surname);
-        editor.putString("age", age);
-        editor.apply();
+        if (!name.isEmpty() && !surname.isEmpty() && !age.isEmpty()) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("name", name);
+            editor.putString("surname", surname);
+            editor.putString("age", age);
+            editor.apply();
+        } else {
+            Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -3,6 +3,7 @@ package ru.mirea.ivanovea.firebaseauth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Objects;
 
 import ru.mirea.ivanovea.firebaseauth.databinding.ActivityMainBinding;
+import ru.mirea.ivanovea.firebaseauth.R;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 // [START initialize_auth] Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser()!=null){
+            signOut();
+        }
 // [END initialize_auth]
         binding.createaccountButton2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            startActivity(new Intent(MainActivity.this, WeatherActivity.class));
+                            MainActivity.this.finish();
                         } else {
 // If sign in fails, display a message to the user.
 
@@ -111,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            startActivity(new Intent(MainActivity.this, WeatherActivity.class));
+                            MainActivity.this.finish();
                         } else {
 // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());

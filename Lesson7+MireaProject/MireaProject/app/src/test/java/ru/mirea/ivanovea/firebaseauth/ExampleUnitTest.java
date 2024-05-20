@@ -1,4 +1,4 @@
-package ru.mirea.ivanovea.mireaproject;
+package ru.mirea.ivanovea.firebaseauth;
 
 import org.junit.Test;
 

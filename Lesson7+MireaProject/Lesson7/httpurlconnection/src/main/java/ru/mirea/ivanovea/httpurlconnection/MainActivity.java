@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -42,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 if (connectivityManager != null) {
                     networkinfo = connectivityManager.getActiveNetworkInfo();
                 }
+
                 if (networkinfo != null && networkinfo.isConnected()) {
                     new DownloadPageTask().execute("https://ipinfo.io/json");
                 } else {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-           // Objects.requireNonNull(binding.textView).setText("Загружаем...");
+            binding.textView.setText("Загружаем...");
         }
 
         @Override
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Log.d(MainActivity.class.getSimpleName(), result);
+
             try {
                 JSONObject responseJson = new JSONObject(result);
                 String city = responseJson.optString("city");
@@ -79,15 +80,8 @@ public class MainActivity extends AppCompatActivity {
                 String ip = responseJson.optString("ip");
                 String country = responseJson.optString("country");
                 String timezone = responseJson.optString("timezone");
-               // String weather = responseJson.getJSONObject("current_weather").getString("temperature");
-
-
-                // Получение координат
-                String latitude = responseJson.optString("latitude");
-                String longitude = responseJson.optString("longitude");
-                // Формирование URL для запроса к сервису погоды
-                String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true";
-                new DownloadWeatherTask().execute(weatherUrl);
+                String latitude = responseJson.optString("loc").split(",")[0]; // Получение широты из "loc"
+                String longitude = responseJson.optString("loc").split(",")[1]; // Получение долготы из "loc"
 
                 // Обновление текстовых полей с данными о местоположении
                 binding.citytextView.setText("Город: " + city);
@@ -95,7 +89,11 @@ public class MainActivity extends AppCompatActivity {
                 binding.iptextView.setText("IP: " + ip);
                 binding.countrytextView.setText("Страна: " + country);
                 binding.timezonetextView.setText("Часовой пояс: " + timezone);
-               // binding.weathertextView.setText("Погода: " + weather);
+
+                // Формирование URL для запроса к сервису погоды
+                String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true";
+                new DownloadWeatherTask().execute(weatherUrl);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -116,8 +114,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            // Обновление текстового поля с данными о погоде
-          //  binding.weathertextView.setText(result);
+            Log.d(MainActivity.class.getSimpleName(), result);
+
+            try {
+                JSONObject weatherJson = new JSONObject(result);
+                Log.d(MainActivity.class.getSimpleName(), "weatherJson: " + weatherJson);
+
+                String temperature = weatherJson.getJSONObject("current_weather").getString("temperature");
+                String wind = weatherJson.getJSONObject("current_weather").getString("windspeed");
+                String weather = weatherJson.getJSONObject("current_weather").getString("weathercode");
+
+                binding.temperaruretextView.setText("Температура: " + temperature);
+                binding.windtextView.setText("Ветер (скорость): " + wind);
+                binding.weathertextView.setText("Погода (код): " + weather);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -127,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             URL url = new URL(address);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(100000);
-            connection.setConnectTimeout(100000);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(10000);
             connection.setRequestMethod("GET");
             connection.setInstanceFollowRedirects(true);
             connection.setUseCaches(false);
             connection.setDoInput(true);
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // 200 OK
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 inputStream = connection.getInputStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 int read;
@@ -148,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 data = connection.getResponseMessage() + ". Error Code: " + responseCode;
             }
             connection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -164,14 +175,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             URL url = new URL(weatherUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(100000);
-            connection.setConnectTimeout(100000);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(10000);
             connection.setRequestMethod("GET");
             connection.setInstanceFollowRedirects(true);
             connection.setUseCaches(false);
             connection.setDoInput(true);
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // 200 OK
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 inputStream = connection.getInputStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 int read;
@@ -185,8 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 data = connection.getResponseMessage() + ". Error Code: " + responseCode;
             }
             connection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             if (inputStream != null) {
                 inputStream.close();

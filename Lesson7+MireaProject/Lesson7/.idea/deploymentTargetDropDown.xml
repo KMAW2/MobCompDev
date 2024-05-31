@@ -5,6 +5,12 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="firebaseauth">
+        <State />
+      </entry>
+      <entry key="httpurlconnection">
+        <State />
+      </entry>
       <entry key="timeservice">
         <State />
       </entry>
